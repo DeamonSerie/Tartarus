@@ -1,0 +1,11 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/tartarus-primitives",
+    "crates/pallet-mirror",
+    "crates/pallet-oubr",
+    "crates/pallet-bundle",
+    "crates/pallet-treasury",
+    "crates/pallet-oracle",
+    "crates/tartarus-integration",
+]

@@ -1,0 +1,37 @@
+[package]
+name = "tartarus-integration"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+frame-support = { version = "49.0.1", default-features = false }
+frame-system = { version = "49.0.0", default-features = false }
+sp-runtime = { version = "49.0.0", default-features = false }
+sp-core = { version = "43.0.0", default-features = false }
+sp-io = { version = "49.0.0", default-features = false }
+codec = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
+scale-info = { version = "2", default-features = false, features = ["derive"] }
+tartarus-primitives = { path = "../tartarus-primitives", default-features = false }
+pallet-mirror = { path = "../pallet-mirror", default-features = false }
+pallet-oubr = { path = "../pallet-oubr", default-features = false }
+pallet-bundle = { path = "../pallet-bundle", default-features = false }
+pallet-treasury = { path = "../pallet-treasury", default-features = false }
+pallet-oracle = { path = "../pallet-oracle", default-features = false }
+
+[features]
+default = ["std"]
+std = [
+    "frame-support/std",
+    "frame-system/std",
+    "sp-runtime/std",
+    "sp-core/std",
+    "sp-io/std",
+    "codec/std",
+    "scale-info/std",
+    "tartarus-primitives/std",
+    "pallet-mirror/std",
+    "pallet-oubr/std",
+    "pallet-bundle/std",
+    "pallet-treasury/std",
+    "pallet-oracle/std",
+]
