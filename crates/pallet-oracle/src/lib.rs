@@ -68,13 +68,8 @@ pub mod pallet {
             };
             let threshold = twenty_pct;
 
-            // mint mirror
-            pallet_mirror::Pallet::<T>::mint_mirror(
-                debt_id,
-                signal.token,
-                principal,
-                signal.debtor.clone(),
-            )?;
+            // register debt principal with mirror pallet
+            pallet_mirror::Pallet::<T>::register_debt(debt_id, principal)?;
 
             // create oubrs
             pallet_oubr::Pallet::<T>::create_oubrs(

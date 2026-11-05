@@ -43,12 +43,21 @@ pub struct DebtSignal<AccountId> {
     pub timestamp: u64,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Encode, Decode, TypeInfo, MaxEncodedLen)]
+pub struct MirrorToken {
+    pub token_id: TokenId,
+    pub supply: Balance,
+    pub burned: Balance,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, Encode, Decode, TypeInfo)]
 pub struct MirrorNft<AccountId> {
     pub id: MirrorId,
     pub debt_id: DebtId,
-    pub token: TokenId,
-    pub amount: Balance,
+    pub tokens: Vec<MirrorToken>,
+    pub total_minted: Balance,
+    pub burn_target: Balance,
+    pub burned_total: Balance,
     pub owner: AccountId,
     pub price: Balance,
     pub deposited: Vec<Deposit<AccountId>>,
@@ -104,8 +113,9 @@ where
     fn max_encoded_len() -> usize {
         MirrorId::max_encoded_len()
             + DebtId::max_encoded_len()
-            + TokenId::max_encoded_len()
-            + Balance::max_encoded_len()
+            + 4
+            + 10 * MirrorToken::max_encoded_len()
+            + Balance::max_encoded_len() * 3
             + AccountId::max_encoded_len()
             + Balance::max_encoded_len()
             + 4
