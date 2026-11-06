@@ -76,14 +76,43 @@ pub mod pallet {
         SaleEnded,
         SaleNotEnded,
         AlreadyFinalized,
+        DebtNotFound,
+        MirrorNotFound,
+        TokenNotFound,
     }
 
     #[pallet::call]
     impl<T: Config> Pallet<T> {
         #[pallet::weight(10_000)]
-        pub fn create_bundle(origin: OriginFor<T>, debt_id: DebtId) -> DispatchResult {
+        pub fn create_bundle(
+            origin: OriginFor<T>,
+            debt_id: DebtId,
+            token: u32,
+        ) -> DispatchResult {
             let _ = ensure_signed(origin)?;
             let now: u64 = frame_system::Pallet::<T>::block_number().saturated_into();
+
+            // resolve mirror for debt
+            let mirror_id = pallet_mirror::Pallet::<T>::debt_mirror_id(debt_id)
+                .ok_or(Error::<T>::MirrorNotFound)?;
+            let mirror = pallet_mirror::Pallet::<T>::get_mirror(mirror_id)
+                .ok_or(Error::<T>::MirrorNotFound)?;
+
+            // resolve token selector: index when < 10, otherwise token_id
+            let currency_id = if token < 10 {
+                mirror
+                    .tokens
+                    .get(token as usize)
+                    .map(|t| t.token_id)
+                    .ok_or(Error::<T>::TokenNotFound)?
+            } else {
+                mirror
+                    .tokens
+                    .iter()
+                    .find(|t| t.token_id == token)
+                    .map(|t| t.token_id)
+                    .ok_or(Error::<T>::TokenNotFound)?
+            };
 
             // compute bundle amount
             let principal = pallet_mirror::Pallet::<T>::principal(debt_id);
@@ -119,7 +148,6 @@ pub mod pallet {
             }
 
             let id = BundleCount::<T>::get() + 1;
-            let currency_id = id as u32;
             let sale_end = now.saturating_add(40 * 60); // seconds? blocks? treat as time units
             let bundle = Bundle {
                 id,

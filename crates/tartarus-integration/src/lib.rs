@@ -135,9 +135,18 @@ mod tests {
             assert_eq!(o.winner, Some(3u64));
 
             // create bundle
+            // start mirror for debt
+            let supplies = vec![40u128; 10];
+            pallet_mirror::Pallet::<TestRuntime>::start_mirror(
+                frame_system::RawOrigin::Signed(1).into(),
+                debt_id,
+                supplies,
+            )
+            .unwrap();
             pallet_bundle::Pallet::<TestRuntime>::create_bundle(
                 frame_system::RawOrigin::Signed(5).into(),
                 debt_id,
+                0,
             )
             .unwrap();
             let bundles: Vec<_> = (1..=pallet_bundle::Pallet::<TestRuntime>::get_bundle(1)
@@ -212,11 +221,20 @@ mod tests {
                 oid,
             )
             .unwrap();
+            // start mirror for debt
+            let supplies = vec![40u128; 10];
+            pallet_mirror::Pallet::<TestRuntime>::start_mirror(
+                frame_system::RawOrigin::Signed(1).into(),
+                1,
+                supplies,
+            )
+            .unwrap();
             // create bundle
             frame_system::Pallet::<TestRuntime>::set_block_number(100001);
             pallet_bundle::Pallet::<TestRuntime>::create_bundle(
                 frame_system::RawOrigin::Signed(3).into(),
                 1,
+                0,
             )
             .unwrap();
             let b = pallet_bundle::Pallet::<TestRuntime>::get_bundle(1).unwrap();
